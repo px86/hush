@@ -1,0 +1,9 @@
+#+TITLE: hush - The humble shell
+#+AUTHOR: Pushkar Raj
+#+AUTHOR: px86@protonmail.com
+
+A UNIX shell written in C++.
+
+* Notes:
+
+- [[https://github.com/px86/linereader][linereader]] library
