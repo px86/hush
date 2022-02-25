@@ -178,7 +178,7 @@ auto Hush::parse_pipe(size_t start, size_t end) const -> Cmd *
     }
   }
   return parse_redir(start, end);
-p}
+}
 
 auto Hush::parse_redir(size_t start, size_t end) const -> Cmd *
 {
@@ -248,6 +248,7 @@ void Hush::run(const std::string &cmd) {
 
   if (fork_or_panic() == 0) {
     root->run();
+    root->clean();
     std::exit(EXIT_SUCCESS);
   } else {
     int status;

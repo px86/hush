@@ -29,11 +29,17 @@ struct Token {
 class Cmd {
 public:
   virtual void run() = 0;
+  virtual void clean() = 0;
 };
 
 class Seq : public Cmd {
 public:
   void run() override;
+  void clean() override {
+    first->clean();
+    next->clean();
+  }
+
   Cmd *first;
   Cmd *next;
 };
@@ -41,6 +47,11 @@ public:
 class Pipe : public Cmd {
 public:
   void run() override;
+  void clean() override {
+    left->clean();
+    right->clean();
+  }
+
   Cmd *left;
   Cmd *right;
 };
@@ -48,6 +59,8 @@ public:
 class Redir : public Cmd {
 public:
   void run() override;
+  void clean() override { cmd->clean(); }
+
   Cmd *cmd;
   const char *file;
   int fd;
@@ -57,12 +70,18 @@ public:
 class Exec : public Cmd {
 public:
   void run() override;
+  void clean() override {
+    delete [] argv;
+  }
+
   const char **argv;
 };
 
 class Back : public Cmd {
 public:
   void run() override;
+  void clean() override { cmd->clean(); }
+
   Cmd *cmd;
 };
 
