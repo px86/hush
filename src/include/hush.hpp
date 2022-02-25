@@ -30,6 +30,7 @@ class Cmd {
 public:
   virtual void run() = 0;
   virtual void clean() = 0;
+  virtual ~Cmd() {}
 };
 
 class Seq : public Cmd {
@@ -38,10 +39,14 @@ public:
   void clean() override {
     first->clean();
     next->clean();
+    delete first;
+    delete next;
   }
 
   Cmd *first;
   Cmd *next;
+
+  ~Seq() {}
 };
 
 class Pipe : public Cmd {
@@ -50,39 +55,53 @@ public:
   void clean() override {
     left->clean();
     right->clean();
+    delete left;
+    delete right;
   }
 
   Cmd *left;
   Cmd *right;
+
+  ~Pipe() {}
 };
 
 class Redir : public Cmd {
 public:
   void run() override;
-  void clean() override { cmd->clean(); }
+  void clean() override {
+    cmd->clean();
+    delete cmd;
+  }
 
   Cmd *cmd;
   const char *file;
   int fd;
   mode_t mode;
+
+  ~Redir() {}
 };
 
 class Exec : public Cmd {
 public:
   void run() override;
-  void clean() override {
-    delete [] argv;
-  }
+  void clean() override {}
 
   const char **argv;
+
+  ~Exec() { delete [] argv; }
 };
 
 class Back : public Cmd {
 public:
   void run() override;
-  void clean() override { cmd->clean(); }
+  void clean() override {
+    cmd->clean();
+    delete cmd;
+  }
 
   Cmd *cmd;
+
+  ~Back() {}
 };
 
 inline pid_t fork_or_panic();
