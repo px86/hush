@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -244,6 +245,20 @@ void Hush::run(const std::string &cmd) {
   m_tokens.clear();
 
   tokenize();
+
+  if (m_tokens[0].type == Token::Type::ARGUMENT &&
+      !strcmp("cd", m_cmd.c_str() + m_tokens[0].position)) {
+    if (m_tokens[1].type != Token::Type::ARGUMENT) {
+      std::cerr << "syntax error" << std::endl;
+    } else {
+      auto dir = m_cmd.c_str() + m_tokens[1].position;
+      if (chdir(dir) < 0) {
+	perror("cd failed");
+      }
+    }
+    return;
+  }
+
   auto root = parse();
 
   if (fork_or_panic() == 0) {
