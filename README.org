@@ -2,8 +2,16 @@
 #+AUTHOR: Pushkar Raj
 #+AUTHOR: px86@protonmail.com
 
-A UNIX shell written in C++.
+A UNIX shell written in C++, supporting job sequencing, background job, IO re-directions and piping.
+
+* Compilation
+
+Make sure you have =GCC= compiler and =GNU Make= installed.
+
+#+begin_src shell
+  make hush
+#+end_src
 
 * Notes:
 
-- [[https://github.com/px86/linereader][linereader]] library
+- [[https://github.com/px86/linereader][linereader]]: my linereader library used in this project
