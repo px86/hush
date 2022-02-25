@@ -2,3 +2,6 @@
 hush
 *~
 .clangd
+.history
+msg
+foobar
