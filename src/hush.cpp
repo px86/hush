@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
+#include <memory>
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
@@ -138,9 +139,9 @@ void Hush::tokenize()
   }
 }
 
-inline auto Hush::parse() const -> Cmd *
+inline auto Hush::parse() const -> std::unique_ptr<Cmd>
 {
-  return parse_seq(0, m_tokens.size());
+  return std::unique_ptr<Cmd>(parse_seq(0, m_tokens.size()));
 }
 
 auto Hush::parse_seq(size_t start, size_t end) const -> Cmd *
@@ -267,6 +268,5 @@ void Hush::run(const std::string &cmd) {
   } else {
     int status;
     wait(&status);
-    delete root;
   }
 }

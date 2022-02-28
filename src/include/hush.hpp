@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 struct Token {
   enum class Type {
@@ -88,7 +89,7 @@ public:
   void run(const std::string &cmd);
 private:
   void tokenize();
-  auto parse() const -> Cmd *;
+  auto parse() const -> std::unique_ptr<Cmd>;
 
   auto parse_seq(size_t start, size_t end) const -> Cmd *;
   auto parse_pipe(size_t start, size_t end) const -> Cmd *;
