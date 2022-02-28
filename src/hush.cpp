@@ -263,10 +263,10 @@ void Hush::run(const std::string &cmd) {
 
   if (fork_or_panic() == 0) {
     root->run();
-    root->clean();
     std::exit(EXIT_SUCCESS);
   } else {
     int status;
     wait(&status);
+    delete root;
   }
 }

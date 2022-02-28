@@ -1,10 +1,7 @@
 #pragma once
 
-#include <cstddef>
 #include <string>
 #include <vector>
-
-#include <sys/types.h>
 
 struct Token {
   enum class Type {
@@ -29,79 +26,58 @@ struct Token {
 class Cmd {
 public:
   virtual void run() = 0;
-  virtual void clean() = 0;
   virtual ~Cmd() {}
 };
 
 class Seq : public Cmd {
 public:
-  void run() override;
-  void clean() override {
-    first->clean();
-    next->clean();
-    delete first;
-    delete next;
-  }
-
   Cmd *first;
   Cmd *next;
 
-  ~Seq() {}
+  void run();
+  ~Seq() {
+    delete first;
+    delete next;
+  }
 };
 
 class Pipe : public Cmd {
 public:
-  void run() override;
-  void clean() override {
-    left->clean();
-    right->clean();
-    delete left;
-    delete right;
-  }
-
   Cmd *left;
   Cmd *right;
 
-  ~Pipe() {}
+  void run();
+  ~Pipe() {
+    delete left;
+    delete right;
+  }
 };
 
 class Redir : public Cmd {
 public:
-  void run() override;
-  void clean() override {
-    cmd->clean();
-    delete cmd;
-  }
-
   Cmd *cmd;
   const char *file;
   int fd;
   mode_t mode;
 
-  ~Redir() {}
+  void run();
+  ~Redir() { delete cmd; }
 };
 
 class Exec : public Cmd {
 public:
-  void run() override;
-  void clean() override {}
-
   const char **argv;
 
-  ~Exec() { delete [] argv; }
+  void run();
+  ~Exec() { delete[] argv; }
 };
 
 class Back : public Cmd {
 public:
-  void run() override;
-  void clean() override {
-    cmd->clean();
-    delete cmd;
-  }
-
   Cmd *cmd;
 
-  ~Back() {}
+  void run();
+  ~Back() { delete cmd; }
 };
 
 inline pid_t fork_or_panic();
